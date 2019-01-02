@@ -1,11 +1,10 @@
 function initMap() {
 	const map = new google.maps.Map(document.getElementById('map'), {
 		center: {lat: 42.42830, lng: 18.771238},
-		zoom: 15
+		zoom: 10
 	});
-}
 
-const initialLocations = [
+	const initialLocations = [
 {title: 'Cats Museum', location: {lat: 42.425080, lng: 18.770212} },
 {title: 'Maritime Museum', location: {lat: 42.425007, lng: 18.771327} },
 {title: 'Kotor Fortress', location: {lat: 42.422094, lng: 18.774576} },
@@ -18,3 +17,14 @@ const initialLocations = [
 {title: 'Skadar Lake National Park', location: {lat: 42.247589, lng: 19.217259} },
 {title: 'Lovcen National Park', location: {lat: 42.397654, lng: 18.843244} }
 ];
+
+
+	const markers = [];
+for(let i = 0; i < initialLocations.length; i++) {
+	const marker = new google.maps.Marker({
+		position: initialLocations[i].location,
+		map: map,
+		title: initialLocations[i].title
+	});
+}
+}
