@@ -20,11 +20,23 @@ function initMap() {
 
 
 	const markers = [];
-for(let i = 0; i < initialLocations.length; i++) {
-	const marker = new google.maps.Marker({
-		position: initialLocations[i].location,
-		map: map,
-		title: initialLocations[i].title
-	});
-}
+	for(let i = 0; i < initialLocations.length; i++) {
+		const marker = new google.maps.Marker({
+			position: initialLocations[i].location,
+			map: map,
+			title: initialLocations[i].title,
+			animation: google.maps.Animation.DROP
+		});
+
+		markers.push(marker);
+		marker.addListener('click', function() {
+			if (marker.getAnimation() !== null) {
+				marker.setAnimation(null);
+			} else {
+				marker.setAnimation(google.maps.Animation.BOUNCE);
+				setTimeout(function(){ marker.setAnimation(null); }, 800);
+			}
+
+		});
+	}
 }
