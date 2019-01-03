@@ -4,6 +4,7 @@ function initMap() {
 		zoom: 10
 	});
 
+// array of locations
 	const initialLocations = [
 {title: 'Cats Museum', location: {lat: 42.425080, lng: 18.770212} },
 {title: 'Maritime Museum', location: {lat: 42.425007, lng: 18.771327} },
@@ -17,7 +18,6 @@ function initMap() {
 {title: 'Skadar Lake National Park', location: {lat: 42.247589, lng: 19.217259} },
 {title: 'Lovcen National Park', location: {lat: 42.397654, lng: 18.843244} }
 ];
-
 
 	const markers = [];
 	for(let i = 0; i < initialLocations.length; i++) {
@@ -39,3 +39,11 @@ function initMap() {
 		});
 	}
 }
+
+// the application's view model
+function AppViewModel() {
+	this.result = ko.observable("This is what we want to show up");
+	this.searchValue = ko.observable("");
+}
+
+ko.applyBindings(new AppViewModel());
