@@ -20,6 +20,10 @@ function initMap() {
 ];
 
 	const markers = [];
+	const largeInfoWindow = new google.maps.InfoWindow({
+		content: "Hi there"
+	});
+
 	for(let i = 0; i < initialLocations.length; i++) {
 		const marker = new google.maps.Marker({
 			position: initialLocations[i].location,
@@ -29,7 +33,9 @@ function initMap() {
 		});
 
 		markers.push(marker);
+
 		marker.addListener('click', function() {
+			largeInfoWindow.open(map, marker);
 			if (marker.getAnimation() !== null) {
 				marker.setAnimation(null);
 			} else {
@@ -42,6 +48,8 @@ function initMap() {
 
 // the application's view model
 function AppViewModel() {
+	const self = this;
+
 	this.result = ko.observable("This is what we want to show up");
 	this.searchValue = ko.observable("");
 }
