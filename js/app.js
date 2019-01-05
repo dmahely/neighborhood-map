@@ -20,9 +20,6 @@ function initMap() {
 ];
 
 	const markers = [];
-	const largeInfoWindow = new google.maps.InfoWindow({
-		content: "Hi there"
-	});
 
 	for(let i = 0; i < initialLocations.length; i++) {
 		const marker = new google.maps.Marker({
@@ -35,7 +32,6 @@ function initMap() {
 		markers.push(marker);
 
 		marker.addListener('click', function() {
-			largeInfoWindow.open(map, marker);
 			if (marker.getAnimation() !== null) {
 				marker.setAnimation(null);
 			} else {
@@ -52,6 +48,19 @@ function AppViewModel() {
 
 	this.result = ko.observable("This is what we want to show up");
 	this.searchValue = ko.observable("");
+
+	this.populateInfoWindow = function(marker, infoWindow) {
+
+		if (infoWindow.marker != marker) {
+			infoWindow.setContent("");
+			infoWindow.marker = marker;
+
+			const apiClientId = "HEETPNDMW35BANJMNGM5UKQYNDTO5XJ5ISPU2UMH31DT0OFO";
+			const apiClientSecret = "WHCG1CU03BVLV5WFFRCZ1OM0WGNYLCDPX01HYTTOS1PNIVPL";
+
+			const apiEndpoint = "https://api.foursquare.com/v2/venues/search?ll=" + marker.lat + "," + marker.lng + "&client_id=" + apiClientId + "&client_secret=" + apiClientSecret + "&query=" + marker.title + "&v=20170708&m=foursquare";
+		}
+	}
 }
 
 ko.applyBindings(new AppViewModel());
