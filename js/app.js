@@ -93,4 +93,14 @@ function AppViewModel() {
 			});
 		}
 	});
+
+	this.filteredList.subscribe(function (locations) {
+		ko.utils.arrayForEach(self.locationsList(), function(location) {
+			let show = false;
+			for(let i = 0; i < locations.length; i++) {
+				show = true;
+			}
+			location.showMarker(show);
+		});
+	});
 }
