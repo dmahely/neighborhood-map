@@ -8,14 +8,13 @@ function initMap() {
 		zoom: 10
 	});
 
-	largeInfowindow = new google.maps.Infowindow();
+	largeInfowindow = new google.maps.InfoWindow();
 	bounds = new google.maps.LatLngBounds();
 
-	ko.applyBindings(new ViewModel());
-
+	ko.applyBindings(new AppViewModel());
 }
 
-// view model
+// data model
 let Location = function(data) {
 	let self = this;
 
@@ -28,32 +27,58 @@ let Location = function(data) {
 		map: map,
 		animation: google.maps.Animation.DROP,
 	});
+
+	bounds.extend(this.marker.position);
+	map.fitBounds(bounds);
+
+	this.showMarker = function(show) {
+		if(show) {
+			this.marker.setMap(map);
+			bounds.extend(this.marker.position);
+			map.fitBounds(bounds);
+		} else {
+			this.marker.setMap(null);
+		}
+	};
+
+	this.setLocation = function(currentLocation) {
+		populateInfoWindow(this.marker, largeInfowindow);
+		map.panTo(this.marker.getPosition());
+		animateMarker(this.marker);
+	};
+
+	this.marker.addListener('click', function() {
+		populateInfoWindow(this, largeInfowindow);
+		animateMarker(this);
+		map.panTo(this.getPosition());
+	});
 }
 
-	const markers = [];
-	for(let i = 0; i < initialLocations.length; i++) {
-		const marker = new google.maps.Marker({
-			position: initialLocations[i].location,
-			map: map,
-			title: initialLocations[i].title,
-			animation: google.maps.Animation.DROP
-		});
+function animateMarker(marker) {
+	marker.setAnimation(google.maps.Animation.BOUNCE);
+	setTimeout(function() {
+		marker.setAnimation(null)
+	}, 900);
+}
 
-		markers.push(marker);
-		marker.addListener('click', function() {
-			if (marker.getAnimation() !== null) {
-				marker.setAnimation(null);
-			} else {
-				marker.setAnimation(google.maps.Animation.BOUNCE);
-				setTimeout(function(){ marker.setAnimation(null); }, 800);
-			}
+function populateInfoWindow(marker, infowindow) {
+	if(infowindow.marker != marker) {
+		infowindow.setContent("");
+		infowindow.marker = marker;
+		infowindow.addListener('closeclick', function() {
+			infowindow.marker = null;
 		});
 	}
+}
 
 // the application's view model
 function AppViewModel() {
-	this.result = ko.observable("This is what we want to show up");
-	this.searchValue = ko.observable("");
-}
+	let self = this;
 
-ko.applyBindings(new AppViewModel());
+	this.locationsList = ko.observableArray([]);
+	this.searchValue = ko.observable("");
+
+	initialLocations.forEach(function(location) {
+		self.locationsList.push(new Location(location));
+	});
+}
