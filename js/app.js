@@ -1,7 +1,9 @@
+// global variables
 let map;
 let largeInfowindow;
 let bounds;
 
+// initializes a map via the google maps api
 function initMap() {
 	map = new google.maps.Map(document.getElementById('map'), {
 		center: {lat: 42.42830, lng: 18.771238},
@@ -11,10 +13,11 @@ function initMap() {
 	largeInfowindow = new google.maps.InfoWindow();
 	bounds = new google.maps.LatLngBounds();
 
+	// starts the application's view model
 	ko.applyBindings(new AppViewModel());
 }
 
-// data model
+// the application's data model
 let Location = function(data) {
 	let self = this;
 
@@ -28,11 +31,14 @@ let Location = function(data) {
 		animation: google.maps.Animation.DROP,
 	});
 
+	/* extends the bounds of the map
+	** i.e. its size to fit the map */
 	bounds.extend(this.marker.position);
 	map.fitBounds(bounds);
 
-	this.showMarker = function(show) {
-		if(show) {
+	// shows the location's marker on the map
+	this.showMarker = function(isShown) {
+		if(isShown) {
 			this.marker.setMap(map);
 			bounds.extend(this.marker.position);
 			map.fitBounds(bounds);
@@ -41,6 +47,8 @@ let Location = function(data) {
 		}
 	};
 
+	/* animates the marker and opens the infowindow
+	** when a location is clicked on */
 	this.setLocation = function(currentLocation) {
 		populateInfoWindow(this.marker, largeInfowindow);
 		map.panTo(this.marker.getPosition());
@@ -54,17 +62,20 @@ let Location = function(data) {
 	});
 }
 
+// animates the marker by bouncing
 function animateMarker(marker) {
 	marker.setAnimation(google.maps.Animation.BOUNCE);
 	setTimeout(function() {
 		marker.setAnimation(null)
 	}, 900);
 }
-
+/* populates the infowindow using data
+** received from an api call to foursquare */
 function populateInfoWindow(marker, infowindow) {
 	if(infowindow.marker != marker) {
 		infowindow.setContent("");
 		infowindow.marker = marker;
+		// closes the infowindow
 		infowindow.addListener('closeclick', function() {
 			infowindow.marker = null;
 		});
@@ -75,7 +86,7 @@ function populateInfoWindow(marker, infowindow) {
 		let infoWindowContent = "<div><b>" + marker.title + "</b></div>";
 
 		let apiEndpoint = "https://api.foursquare.com/v2/venues/search?v=20161016&client_id=" + apiClientId + "&client_secret=" + apiClientSecret + "&ll=" + marker.position.lat() + "," + marker.position.lng() + "&query=" + marker.title;
-
+		// api call
 		$.getJSON(apiEndpoint).done(function(data) {
 			if(data.response.venues) {
 				let venue = data.response.venues[0];
@@ -92,12 +103,13 @@ function populateInfoWindow(marker, infowindow) {
 			infowindow.setContent(infoWindowContent + attribution);
 		});
 
+		// opens the infowindow of the marker
 		infowindow.open(map, marker);
 	}
 }
 
 function mapError() {
-    alert('unable to load Google Map');
+    alert('Unable to load Google Maps. Check your Internet connection.');
 }
 
 // the application's view model
@@ -107,13 +119,18 @@ function AppViewModel() {
 	this.locationsList = ko.observableArray([]);
 	this.searchValue = ko.observable("");
 
+	// adds each location in initialLocations.js to this view model's locationsList variable
 	initialLocations.forEach(function(location) {
 		self.locationsList.push(new Location(location));
 	});
 
+	/* filteres the locations according
+	** to the entered search keyword and
+	** returns only the matching locations */
 	this.filteredList = ko.computed(function() {
 		let filter = self.searchValue().toLowerCase();
 
+		// if the input is empty
 		if(!filter) {
 			return self.locationsList();
 		} else {
@@ -123,13 +140,16 @@ function AppViewModel() {
 		}
 	});
 
+	/* only shows the filtered locations'
+	** markers and hides the rest */
 	this.filteredList.subscribe(function (locations) {
 		ko.utils.arrayForEach(self.locationsList(), function(location) {
-			let show = false;
+			let isShown = false;
 			for(let i = 0; i < locations.length; i++) {
-				show = true;
+				if(locations[i].title == location.title)
+					isShown = true;
 			}
-			location.showMarker(show);
+			location.showMarker(isShown);
 		});
 	});
 }
