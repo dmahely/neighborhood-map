@@ -9,10 +9,13 @@
 <body>
 	<div>
 		<label>Search:</label>
-		<input placeholder="Search..." data-bind="value: searchValue">
-		<button>Filter</button>
+		<input type="text" placeholder="Search..." data-bind="textInput: searchValue">
 	</div>
-	<div id="result" data-bind="text: result">This is the div we want to target</div>
+	<div id="result">
+		<ul data-bind="foreach: filteredList">
+			<li><a href="#" data-bind="text: title, click: setLocation"></a></li>
+		</ul>
+	</div>
 	<div id="map"></div>
 </body>
 
@@ -20,5 +23,5 @@
 <script src="js/knockout-3.4.2.js"></script>
 <script src="js/locations.js"></script>
 <script src="js/app.js"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBtw2Wd_f_Wr3Hi9tILlcMby9BVJ7MGdDg&callback=initMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBtw2Wd_f_Wr3Hi9tILlcMby9BVJ7MGdDg&callback=initMap" onerror="mapError()" async defer></script>
 </html>

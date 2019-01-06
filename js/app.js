@@ -72,7 +72,7 @@ function populateInfoWindow(marker, infowindow) {
 		const apiClientId = "HEETPNDMW35BANJMNGM5UKQYNDTO5XJ5ISPU2UMH31DT0OFO";
 		const apiClientSecret = "WHCG1CU03BVLV5WFFRCZ1OM0WGNYLCDPX01HYTTOS1PNIVPL";
 
-		let infoWindowContent = "<div>" + marker.title + "</div>";
+		let infoWindowContent = "<div><b>" + marker.title + "</b></div>";
 
 		let apiEndpoint = "https://api.foursquare.com/v2/venues/search?v=20161016&client_id=" + apiClientId + "&client_secret=" + apiClientSecret + "&ll=" + marker.position.lat() + "," + marker.position.lng() + "&query=" + marker.title;
 
@@ -82,7 +82,7 @@ function populateInfoWindow(marker, infowindow) {
 				let venue_id = venue.id;
 				let address = venue.location.formattedAddress;
 				for(i = 0; i < address.length; i++) {
-					infoWindowContent = infoWindowContent + "<br/>" + address[i];
+					infoWindowContent += address[i] + "<br/>";
 				}
 			}
 		}).fail(function() {
@@ -94,6 +94,10 @@ function populateInfoWindow(marker, infowindow) {
 
 		infowindow.open(map, marker);
 	}
+}
+
+function mapError() {
+    alert('unable to load Google Map');
 }
 
 // the application's view model
@@ -114,7 +118,7 @@ function AppViewModel() {
 			return self.locationsList();
 		} else {
 			return ko.utils.arrayFilter(self.locationsList(), function(location) {
-				return location.title.toLowerCase().indexOf(filter);
+				return location.title.toLowerCase().indexOf(filter) !== -1;
 			});
 		}
 	});
