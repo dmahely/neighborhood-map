@@ -87,6 +87,9 @@ function populateInfoWindow(marker, infowindow) {
 			}
 		}).fail(function() {
 			infoWindowContent = infoWindowContent + "<div> Cannot connect to Foursquare API</div>"
+		}).always(function() {
+			let attribution = "<div><a href='https://developer.foursquare.com/'> Powered by Foursquare</a></div>"
+			infowindow.setContent(infoWindowContent + attribution);
 		});
 
 		infowindow.open(map, marker);
