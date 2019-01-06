@@ -81,4 +81,16 @@ function AppViewModel() {
 	initialLocations.forEach(function(location) {
 		self.locationsList.push(new Location(location));
 	});
+
+	this.filteredList = ko.computed(function() {
+		let filter = self.searchValue().toLowerCase();
+
+		if(!filter) {
+			return self.locationsList();
+		} else {
+			return ko.utils.arrayFilter(self.locationsList(), function(location) {
+				return location.title.toLowerCase().indexOf(filter);
+			});
+		}
+	});
 }
