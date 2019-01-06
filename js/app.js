@@ -68,6 +68,28 @@ function populateInfoWindow(marker, infowindow) {
 		infowindow.addListener('closeclick', function() {
 			infowindow.marker = null;
 		});
+
+		const apiClientId = "HEETPNDMW35BANJMNGM5UKQYNDTO5XJ5ISPU2UMH31DT0OFO";
+		const apiClientSecret = "WHCG1CU03BVLV5WFFRCZ1OM0WGNYLCDPX01HYTTOS1PNIVPL";
+
+		let infoWindowContent = "<div>" + marker.title + "</div>";
+
+		let apiEndpoint = "https://api.foursquare.com/v2/venues/search?v=20161016&client_id=" + apiClientId + "&client_secret=" + apiClientSecret + "&ll=" + marker.position.lat() + "," + marker.position.lng() + "&query=" + marker.title;
+
+		$.getJSON(apiEndpoint).done(function(data) {
+			if(data.response.venues) {
+				let venue = data.response.venues[0];
+				let venue_id = venue.id;
+				let address = venue.location.formattedAddress;
+				for(i = 0; i < address.length; i++) {
+					infoWindowContent = infoWindowContent + "<br/>" + address[i];
+				}
+			}
+		}).fail(function() {
+			infoWindowContent = infoWindowContent + "<div> Cannot connect to Foursquare API</div>"
+		});
+
+		infowindow.open(map, marker);
 	}
 }
 
