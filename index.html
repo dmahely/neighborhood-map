@@ -1,22 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 	<meta charset="utf-8">
 	<title>When in Montenegro...</title>
 	<link rel="stylesheet" href="css/stylesheet.css">
-	<meta name="viewport" content="device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
 </head>
 <body>
-	<div>
-		<label>Search:</label>
-		<input type="text" placeholder="Search..." data-bind="textInput: searchValue">
-	</div>
-	<div id="result">
-		<ul data-bind="foreach: filteredList">
-			<li><a href="#" data-bind="text: title, click: setLocation"></a></li>
-		</ul>
-	</div>
+	<!-- Search bar -->
+			<div id="search">
+			<input id="input" type="text" placeholder="Search..." data-bind="textInput: searchValue">
+		</div>
+
+			<h3 id="title">When in Montenegro...</h3>
+
+			<!-- Locations -->
+			<div class="result" id="result">
+			<ul class="list" data-bind="foreach: filteredList">
+				<li type="none"><a id="link" href="#" data-bind="text: title, click: setLocation"></a></li>
+			</ul>
+
+			<!-- Map -->
 	<div id="map"></div>
+		</div>
 </body>
 
 <script src="js/jquery-3.3.1.js"></script>
